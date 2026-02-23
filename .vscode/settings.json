@@ -1,0 +1,13 @@
+{
+  "files.autoSave": "afterDelay",
+
+  "editor.codeLens": true,
+
+  "feature.customCodeLens": true,
+
+  "runtimeExecutable": "node",
+
+  "code-runner.executorMap": {
+    "javascript": "node"
+  }
+}

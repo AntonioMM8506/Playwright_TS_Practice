@@ -1,0 +1,21 @@
+{
+  "name": "gherkin-codelens",
+  "displayName": "Gherkin Scenario Runner",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.80.0"
+  },
+  "activationEvents": [
+    "*"
+  ],
+  "main": "./gherkin-codelens.js",
+  "contributes": {
+    "languages": [
+      {
+        "id": "feature",
+        "extensions": [".feature"]
+      }
+    ],
+    "configuration": {}
+  }
+}

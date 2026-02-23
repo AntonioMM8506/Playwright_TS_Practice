@@ -1,0 +1,20 @@
+{
+  "commands": [
+    {
+      "command": "runCucumberScenario",
+      "text": "▶ Run Scenario",
+      "tooltip": "Ejecutar este scenario con Cucumber",
+      "arguments": [
+        "npx cucumber-js --config cucumber.config.js --name \"${selectedText}\""
+      ]
+    },
+    {
+      "command": "debugCucumberScenario",
+      "text": "🐞 Debug Scenario",
+      "tooltip": "Debug del Scenario",
+      "arguments": [
+        "node --inspect-brk ./node_modules/@cucumber/cucumber/bin/cucumber-js --name \"${selectedText}\" --config cucumber.config.js"
+      ]
+    }
+  ]
+}

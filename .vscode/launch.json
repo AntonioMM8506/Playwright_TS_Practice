@@ -1,0 +1,24 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Debug Cucumber TS + Playwright",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": [
+        "cucumber-js",
+        "features/**/*.feature",         
+        "--require-module", "ts-node/register",
+        "--require", "features/steps/**/*.ts",
+        "--require", "features/support/**/*.ts",
+        "--config", "cucumber.config.js",
+        "--name", "Performance user logs in" 
+      ],
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "smartStep": true,
+      "cwd": "${workspaceFolder}"
+    }
+  ]
+}
