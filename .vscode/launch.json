@@ -4,21 +4,28 @@
     {
       "type": "node",
       "request": "launch",
-      "name": "Debug Cucumber TS + Playwright",
+      "name": "Debug Cucumber Scenario (Prompt)",
       "runtimeExecutable": "npx",
       "runtimeArgs": [
         "cucumber-js",
-        "features/**/*.feature",         
+        "features/**/*.feature",
         "--require-module", "ts-node/register",
         "--require", "features/steps/**/*.ts",
         "--require", "features/support/**/*.ts",
         "--config", "cucumber.config.js",
-        "--name", "Performance user logs in" 
+        "--name", "${input:scenarioName}"
       ],
       "console": "integratedTerminal",
       "internalConsoleOptions": "neverOpen",
       "smartStep": true,
       "cwd": "${workspaceFolder}"
+    }
+  ],
+  "inputs": [
+    {
+      "id": "scenarioName",
+      "type": "promptString",
+      "description": "Enter the Scenario name to debug (exactly as in the feature file)"
     }
   ]
 }

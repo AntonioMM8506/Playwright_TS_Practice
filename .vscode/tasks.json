@@ -27,7 +27,7 @@
     {
       "id": "scenarioName",
       "type": "promptString",
-      "description": "Nombre del Scenario a ejecutar (tal como aparece en el feature)"
+      "description": "Enter the Scenario name to run (exactly as in the feature file)"
     }
   ]
 }
