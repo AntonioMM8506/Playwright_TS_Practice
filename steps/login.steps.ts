@@ -21,3 +21,17 @@ Then('user can see the Home Page', async function (this: CustomWorld) {
   const homePage = new HomePage(this.page);
   await expect(homePage.appLogo).toBeVisible;
 });
+
+
+When('standard user enters {string} as password', async function (this: CustomWorld, password: string) {
+  const loginPage = new LoginPage(this.page);
+  const username = process.env.STANDARD_USER || '';
+  await loginPage.loginWithPassword(username, password);
+});
+
+
+Then('user sees error message {string}', async function (this: CustomWorld, errorMessage: string) {
+  const loginPage = new LoginPage(this.page);
+  await expect(loginPage.errorMessage).toBeVisible();
+  await expect(loginPage.errorMessage).toHaveText(errorMessage);
+});

@@ -7,3 +7,6 @@ node_modules/
 /playwright/.cache/
 /playwright/.auth/
 .env
+
+#This folder is automatically created by the Playwright MCP
+.playwright-mcp/
