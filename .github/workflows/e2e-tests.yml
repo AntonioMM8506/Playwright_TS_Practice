@@ -1,0 +1,42 @@
+# GitHub Actions Pipeline for Cucumber + Playwright
+# Purpose: Run all feature files, save test-results as artifacts, and prepare for future reporting enhancements.
+
+name: E2E Tests
+
+on:
+  push:
+    branches: [ main, Actions ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run all Cucumber tests
+        run: npm test
+
+      - name: Upload test-results artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: test-results/
+
+      - name: Upload cucumber reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: cucumberReports
+          path: cucumberReports/
+
+      # Future: Add step to generate and publish a visual report (e.g., pie chart)
