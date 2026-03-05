@@ -13,6 +13,6 @@ export class BasePage {
       throw new Error("There's no Base Url defined");
     }
 
-    await this.navigate(baseUrl); // Ajusta el path si es diferente
+    await this.navigate(baseUrl); 
   }
 }

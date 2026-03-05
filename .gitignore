@@ -10,3 +10,6 @@ node_modules/
 
 #This folder is automatically created by the Playwright MCP
 .playwright-mcp/
+
+#Folder created during each execution to store the generated cucumber reports. It is automatically deleted after each run.
+cucumberReports/

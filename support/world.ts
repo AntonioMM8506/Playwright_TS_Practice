@@ -3,18 +3,30 @@ import { Browser, BrowserContext, Page, chromium } from 'playwright';
 import fs from 'fs';
 import path from 'path';
 
+import dotenv from 'dotenv';
+dotenv.config();
+
 export class CustomWorld extends World {
   browser!: Browser;
   context!: BrowserContext;
   page!: Page;
 
+  stepResults: string[] = [];
+  timestamp: string;
+
   constructor(options: IWorldOptions) {
     super(options);
+
+    this.timestamp = new Date()
+      .toISOString()
+      .replace(/[-:]/g, '')
+      .replace('T', '-')
+      .replace(/\..+/, '');
   }
 
+
   async launch() {
-    this.browser = await chromium.launch({ headless: false });
-    //args: ['--auto-open-devtools-for-tabs'] 
+    this.browser = await chromium.launch({ headless: process.env.HEADLESS === 'true' });
     this.context = await this.browser.newContext();
 
     await this.context.tracing.start({
@@ -30,13 +42,7 @@ export class CustomWorld extends World {
   async saveScreenshot(scenarioName: string) {
     if (!this.page) return;
 
-    const timestamp = new Date()
-      .toISOString()
-      .replace(/[-:]/g, '')
-      .replace('T', '-')
-      .replace(/\..+/, '');
-
-    const fileName = `${scenarioName}-${timestamp}.png`;
+    const fileName = `${scenarioName}-${this.timestamp}.png`;
     const dir = path.join(process.cwd(), 'test-results');
 
     if (!fs.existsSync(dir)) {
@@ -49,17 +55,31 @@ export class CustomWorld extends World {
     console.log(`ScreenShot saved: ${fullPath}`);
   }
 
+  async saveStepLog(scenarioName: string) {
+    const dir = path.join(process.cwd(), 'test-results');
+
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true });
+    }
+
+    const filePath = path.join(
+      dir,
+      `${scenarioName}-${this.timestamp}.txt`
+    );
+
+    const content = this.stepResults.join('\n');
+
+    fs.writeFileSync(filePath, content);
+
+    console.log(`Step log saved: ${filePath}`);
+  }
+
+  
   async cleanup(scenarioName: string) {
   if (this.context) {
     try {
-      const timestamp = new Date()
-        .toISOString()
-        .replace(/[-:]/g, '')
-        .replace('T', '-')
-        .replace(/\..+/, '');
-
       await this.context.tracing.stop({
-        path: `./test-results/${scenarioName}-${timestamp}.zip`
+        path: `./test-results/${scenarioName}-${this.timestamp}.zip`
       });
     } catch (err) {
       console.warn('Tracing stop failed:', err);
