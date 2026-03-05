@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "allowJs": false,
+    "resolveJsonModule": true,
+    "outDir": "dist",
+    "types": ["node", "playwright"]
+  },
+  "include": [
+    "**/*.ts"
+, "cucumber.config.js"  ],
+  "exclude": [
+    "node_modules",
+    "dist"
+  ]
+}

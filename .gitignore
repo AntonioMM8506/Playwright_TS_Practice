@@ -1,0 +1,15 @@
+
+# Playwright
+node_modules/
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+/playwright/.auth/
+.env
+
+#This folder is automatically created by the Playwright MCP
+.playwright-mcp/
+
+#Folder created during each execution to store the generated cucumber reports. It is automatically deleted after each run.
+cucumberReports/
