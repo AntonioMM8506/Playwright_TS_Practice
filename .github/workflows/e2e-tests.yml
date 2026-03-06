@@ -1,5 +1,4 @@
 # GitHub Actions Pipeline for Cucumber + Playwright
-# Purpose: Run all feature files, save test-results as artifacts, and prepare for future reporting enhancements.
 
 name: E2E Tests
 
@@ -11,6 +10,11 @@ on:
   pull_request:
     branches: [ main ]
   workflow_dispatch:
+    inputs:
+        retryCount:
+          description: 'Number of times to rerun failed tests'
+          required: false
+          default: '1'
 
 jobs:
   test:
@@ -57,8 +61,49 @@ jobs:
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
 
-      - name: Run all Cucumber tests
+      - name: Run all Cucumber tests (initial)
         run: npm test
+      - name: Upload initial artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-initial
+          path: test-results/
+      - name: Upload cucumber reports (initial)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cucumberReports-initial
+          path: cucumberReports/
+      - name: Retry failed scenarios
+        if: always()
+        run: |
+          RETRY_COUNT=${{ github.event.inputs.retryCount || 1 }}
+          for i in $(seq 1 $RETRY_COUNT); do
+            if [ -s cucumberReports/@rerun.txt ]; then
+              echo "Retry #$i: Running failed scenarios..."
+              npx cucumber-js --config cucumber.config.js --retry 0 --format rerun:cucumberReports/@rerun.txt --format html:cucumberReports/cucumber-report-retry-$i.html --format json:cucumberReports/cucumber-report-retry-$i.json --format summary --format progress-bar --tags "not @ignore" --retry 0 --retryTagFilter "@rerun"
+              mkdir -p test-results/retry-$i
+              cp test-results/* test-results/retry-$i/ || true
+              mkdir -p cucumberReports/retry-$i
+              cp cucumberReports/* cucumberReports/retry-$i/ || true
+            else
+              echo "No failed scenarios to rerun."
+              break
+            fi
+          done
+      - name: Upload retry artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-retries
+          path: test-results/retry-*/
+      - name: Upload cucumber reports (retries)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cucumberReports-retries
+          path: cucumberReports/retry-*/
 
       - name: Upload test-results artifact
         if: always()
