@@ -77,13 +77,16 @@ jobs:
           path: cucumberReports/
 
       - name: Install chartjs-node-canvas
+        if: always()
         run: npm install chartjs-node-canvas
       - name: Generate Pie Chart Report
+        if: always()
         run: node piechart.js
       - name: List cucumberReports directory
+        if: always()
         run: ls -l cucumberReports
       - name: Print piechart.js error output
-        if: failure()
+        if: always()
         run: cat cucumberReports/piechart.html || echo 'piechart.html not found'
       - name: Upload Pie Chart
         if: always()
