@@ -63,47 +63,42 @@ jobs:
 
       - name: Run all Cucumber tests (initial)
         run: npm test
-      - name: Upload initial artifacts
+      - name: Upload test-results artifact
         if: always()
+        continue-on-error: true
         uses: actions/upload-artifact@v4
         with:
-          name: test-results-initial
+          name: test-results
           path: test-results/
-      - name: Upload cucumber reports (initial)
+      - name: Upload cucumber reports
         if: always()
+        continue-on-error: true
         uses: actions/upload-artifact@v4
         with:
-          name: cucumberReports-initial
+          name: cucumberReports
           path: cucumberReports/
-      - name: Retry failed scenarios
+      - name: Retry failed scenarios and upload retry-only reports
         if: always()
         run: |
           RETRY_COUNT=${{ github.event.inputs.retryCount || 1 }}
           for i in $(seq 1 $RETRY_COUNT); do
             if [ -s cucumberReports/@rerun.txt ]; then
               echo "Retry #$i: Running failed scenarios..."
-              npx cucumber-js --config cucumber.config.js --retry 0 --format rerun:cucumberReports/@rerun.txt --format html:cucumberReports/cucumber-report-retry-$i.html --format json:cucumberReports/cucumber-report-retry-$i.json --format summary --format progress-bar --tags "not @ignore" --retry 0 --retryTagFilter "@rerun"
+              npx cucumber-js --config cucumber.config.js --retry 0 --format rerun:cucumberReports/@rerun.txt --format html:cucumberReports/cucumber-report-retry-$i.html --format json:cucumberReports/cucumber-report-retry-$i.json --format summary --format progress-bar --tags "not @ignore" --retry 0 --retryTagFilter "@rerun" --retry 0 --name "Retry $i"
               mkdir -p test-results/retry-$i
               cp test-results/* test-results/retry-$i/ || true
               mkdir -p cucumberReports/retry-$i
-              cp cucumberReports/* cucumberReports/retry-$i/ || true
+              cp cucumberReports/cucumber-report-retry-$i.* cucumberReports/retry-$i/ || true
+              cp cucumberReports/@rerun.txt cucumberReports/retry-$i/ || true
+              # Upload only retry-specific reports
+              echo "Uploading retry-only reports for retry $i..."
+              gh run upload-artifact --name cucumberReports-retry-$i cucumberReports/retry-$i/
+              gh run upload-artifact --name test-results-retry-$i test-results/retry-$i/
             else
               echo "No failed scenarios to rerun."
               break
             fi
           done
-      - name: Upload retry artifacts
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: test-results-retries
-          path: test-results/retry-*/
-      - name: Upload cucumber reports (retries)
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: cucumberReports-retries
-          path: cucumberReports/retry-*/
 
       - name: Upload test-results artifact
         if: always()
