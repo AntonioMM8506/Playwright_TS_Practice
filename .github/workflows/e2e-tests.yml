@@ -76,4 +76,14 @@ jobs:
           name: cucumberReports
           path: cucumberReports/
 
-      # Future: Add step to generate and publish a visual report (e.g., pie chart)
+      - name: Generate Pie Chart Report
+        run: |
+          npm install chartjs-node-canvas
+          node piechart.js
+      - name: Upload Pie Chart
+        if: always()
+        continue-on-error: true
+        uses: actions/upload-artifact@v4
+        with:
+          name: cucumberPieChart
+          path: cucumberReports/piechart.html
